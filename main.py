@@ -29,8 +29,10 @@ def load_remaining_pages():
 
 def generate_pages():
     logging.info("generating pages")
-    page_pattern = r'''http://bacalaureat.edu.ro/%(year)d/rapoarte/rezultate/alfabetic/page_%(no)d.html'''
-    pages = [page_pattern % {'year': 2010, 'no': i} for i in range(1, 21009+1)]
+    with open('lista_judete', 'rt') as f:
+        judete = [line.strip() for line in f]
+    page_pattern = r'''http://bacalaureat.edu.ro/%(year)s/rapoarte/%(judet)s/unitati_arondate/index.html'''
+    pages = [page_pattern % {'year': 2011, 'judet': judet} for judet in judete]
     random.shuffle(pages)
     return pages
 
