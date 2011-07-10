@@ -13,6 +13,7 @@ class MyFancyUrlOpener(urllib.FancyURLopener):
     def http_error_default(self, url, fp, errcode, errmsg, headers):
         raise IOError('http error', errcode)
 
+
 def dump_remaining_pages(pages):
     logging.info("Dumping remaining pages")
     with open('pages.pickle', 'wb') as f:
@@ -34,6 +35,7 @@ def get_pages():
     if os.path.exists('pages.pickle'):
         return load_remaining_pages()
     return generate_pages()
+
 
 def main():
     logging.info("getting pages")
