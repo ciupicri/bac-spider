@@ -31,8 +31,9 @@ def generate_pages():
     logging.info("generating pages")
     with open('lista_judete', 'rt') as f:
         judete = [line.strip() for line in f]
-    page_pattern = r'''http://bacalaureat.edu.ro/%(year)s/rapoarte/%(judet)s/unitati_arondate/index.html'''
-    pages = [page_pattern % {'year': 2011, 'judet': judet} for judet in judete]
+    page_pattern = r'''http://bacalaureat.edu.ro/%(year)s/rapoarte/%(judet)s/unitati_arondate/page_%(page_no)s.html'''
+    pages = [page_pattern % {'year': 2011, 'judet': judet, 'page_no': page_no}
+                for judet in judete for page_no in range(1, 10)]
     random.shuffle(pages)
     return pages
 
@@ -65,7 +66,14 @@ def main():
             page = pages.pop()
             dst = create_destination(page)
             logging.info("Retrieving %s" % (page,))
-            myurlopener.retrieve(page, dst)
+            try:
+                myurlopener.retrieve(page, dst)
+            except IOError, e:
+                if len(e.args) != 2:
+                    raise
+                if e.args[1] != 404:
+                    raise
+                logging.warn("Did not find %s" % (page,))
             logging.info("Pausing")
             time.sleep(random.random()*0.25)
     except:
