@@ -19,10 +19,12 @@ def dump_remaining_pages(pages):
         return pickle.dump(pages, f)
 
 def load_remaining_pages():
+    logging.info("loading pages from pages.pickle")
     with open('pages.pickle', 'rb') as f:
         return pickle.load(f)
 
 def generate_pages():
+    logging.info("generating pages")
     page_pattern = r'''http://bacalaureat.edu.ro/%(year)d/rapoarte/rezultate/alfabetic/page_%(no)d.html'''
     pages = [page_pattern % {'year': 2010, 'no': i} for i in range(1, 21009+1)]
     random.shuffle(pages)
