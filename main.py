@@ -5,6 +5,7 @@ import os
 import random
 import time
 import urllib
+import urlparse
 
 class MyFancyUrlOpener(urllib.FancyURLopener):
     version ='paianjenul gigi (%s)' % (urllib.FancyURLopener.version,)
@@ -12,40 +13,42 @@ class MyFancyUrlOpener(urllib.FancyURLopener):
     def http_error_default(self, url, fp, errcode, errmsg, headers):
         raise IOError('http error', errcode)
 
-def dump_remaining_page_numbers(page_numbers):
-    logging.info("Dumping remaining page numbers")
+def dump_remaining_pages(pages):
+    logging.info("Dumping remaining pages")
     with open('pages.pickle', 'wb') as f:
-        return pickle.dump(page_numbers, f)
+        return pickle.dump(pages, f)
 
-def load_remaining_page_numbers():
+def load_remaining_pages():
     with open('pages.pickle', 'rb') as f:
         return pickle.load(f)
 
-def generate_page_numbers():
-    page_numbers = range(1, 21009+1)
-    random.shuffle(page_numbers)
-    return page_numbers
+def generate_pages():
+    page_pattern = r'''http://bacalaureat.edu.ro/%(year)d/rapoarte/rezultate/alfabetic/page_%(no)d.html'''
+    pages = [page_pattern % {'year': 2010, 'no': i} for i in range(1, 21009+1)]
+    random.shuffle(pages)
+    return pages
 
-def get_page_numers():
+def get_pages():
     if os.path.exists('pages.pickle'):
-        return load_remaining_page_numbers()
-    return generate_page_numbers()
+        return load_remaining_pages()
+    return generate_pages()
 
 def main():
-    logging.info("getting page numbers")
-    page_numbers = get_page_numers()
+    logging.info("getting pages")
+    pages = get_pages()
     myurlopener = MyFancyUrlOpener()
+    page = None # UnboundLocalError: local variable 'page' referenced before assignment
     try:
-        while page_numbers:
-            i = page_numbers.pop()
-            src = r'''http://bacalaureat.edu.ro/2010/rapoarte/rezultate/alfabetic/page_%d.html''' % (i,)
-            dst = r'''data/2010/rapoarte/rezultate/alfabetic/page_%d.html''' % (i,)
-            logging.info("Retrieving %s" % (src,))
-            myurlopener.retrieve(src, dst)
+        while pages:
+            page = pages.pop()
+            ignore, netloc, path, ignore, ignore = urlparse.urlsplit(page)
+            dst = os.path.join('data', netloc, path[1:]) # without the first /
+            logging.info("Retrieving %s" % (page,))
+            myurlopener.retrieve(page, dst)
             logging.info("Pausing")
             time.sleep(random.random()*0.25)
     except:
-        dump_remaining_page_numbers(page_numbers + [i])
+        dump_remaining_pages(pages + [page])
         raise
 
 if __name__ == '__main__':
