@@ -7,6 +7,9 @@ import time
 import urllib
 import urlparse
 
+OUTPUT_DIR = 'data'
+
+
 class MyFancyUrlOpener(urllib.FancyURLopener):
     version ='paianjenul gigi (%s)' % (urllib.FancyURLopener.version,)
 
@@ -38,10 +41,12 @@ def get_pages():
 
 
 def create_destination(page):
+    global OUTPUT_DIR
+
     ignore, page_netloc, page_path, ignore, ignore = urlparse.urlsplit(page)
     page_path = page_path[1:] # without the first /
     page_path_head, page_path_tail = page_path.rsplit('/', 1)
-    dst_dir = os.path.join('data', page_netloc, page_path_head)
+    dst_dir = os.path.join(OUTPUT_DIR, page_netloc, page_path_head)
     if not os.path.exists(dst_dir):
         os.makedirs(dst_dir)
     dst = os.path.join(dst_dir, page_path_tail)
