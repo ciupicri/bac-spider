@@ -30,7 +30,11 @@ def load_remaining_pages():
 def generate_pages():
     logging.info("generating pages")
     page_pattern = r'''http://bacalaureat.edu.ro/%(year)d/rapoarte/rezultate/alfabetic/page_%(no)d.html'''
-    pages = [page_pattern % {'year': 2010, 'no': i} for i in range(1, 21009+1)]
+    pages = []
+    pages.extend(page_pattern % {'year': 2006, 'no': i} for i in range(1, 19138+1))
+    pages.extend(page_pattern % {'year': 2007, 'no': i} for i in range(1, 19897+1))
+    pages.extend(page_pattern % {'year': 2008, 'no': i} for i in range(1, 22588+1))
+    pages.extend(page_pattern % {'year': 2009, 'no': i} for i in range(1, 21339+1))
     return pages
 
 def get_pages():
