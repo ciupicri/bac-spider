@@ -31,13 +31,15 @@ def generate_pages():
     logging.info("generating pages")
     page_pattern = r'''http://bacalaureat.edu.ro/%(year)d/rapoarte/rezultate/alfabetic/page_%(no)d.html'''
     pages = [page_pattern % {'year': 2010, 'no': i} for i in range(1, 21009+1)]
-    random.shuffle(pages)
     return pages
 
 def get_pages():
     if os.path.exists('pages.pickle'):
-        return load_remaining_pages()
-    return generate_pages()
+        pages = load_remaining_pages()
+    else:
+        pages = generate_pages()
+    random.shuffle(pages)
+    return pages
 
 
 def create_destination(page):
