@@ -31,8 +31,8 @@ def generate_pages():
     logging.info("generating pages")
     with open('lista_judete', 'rt') as f:
         judete = [line.strip() for line in f]
-    page_pattern = r'''http://bacalaureat.edu.ro/%(year)s/rapoarte/%(judet)s/unitati_arondate/page_%(page_no)s.html'''
-    pages = [page_pattern % {'year': 2011, 'judet': judet, 'page_no': page_no}
+    page_pattern = r'''http://static.bacalaureat.edu.ro/%(year)s/rapoarte/%(judet)s/unitati_arondate/page_%(page_no)s.html'''
+    pages = [page_pattern % {'year': 2010, 'judet': judet, 'page_no': page_no}
                 for judet in judete for page_no in range(1, 10)]
     random.shuffle(pages)
     return pages
